@@ -26,7 +26,7 @@ Contents: [Who buys](#who-buys) · [In which month](#in-which-month)
 2024-09, and was judged once on the cutoff 2025-09, whose following 12 months
 were used for nothing else.
 
-![ROC, precision-recall, cumulative gains and calibration for three vehicle categories](figures/who_curves.png)
+![ROC, precision-recall, cumulative gains and calibration for three vehicle categories](figures/year_curves.png)
 
 How to read the four charts:
 
@@ -81,7 +81,7 @@ measure of whether the model holds from year to year.
 Trucks held at 78 to 80 %. Trailers rose from 75 % to 80 to 81 % in the last
 three years. Tractors moved between 64 % and 70 % with no trend.
 
-![ROC AUC in each of five test years](figures/who_ranking.png)
+![ROC AUC in each of five test years](figures/year_ranking.png)
 
 **The yes/no call.** Each cell is **precision / recall**:
 

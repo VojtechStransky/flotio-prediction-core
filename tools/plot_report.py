@@ -2,7 +2,7 @@
 
     python tools/plot_report.py
 
-registry_*.json  -> who_curves.png, who_ranking.png
+registry_*.json  -> year_curves.png, year_ranking.png
 
 Needs only matplotlib and numpy. The reports come from flotio_core.evaluate.
 """
@@ -48,7 +48,7 @@ def legend(ax, **kw) -> None:
     ax.legend(frameon=False, labelcolor=INK, fontsize=9, handlelength=1.6, **kw)
 
 
-def who_curves(reports: list[dict], path: Path) -> None:
+def year_curves(reports: list[dict], path: Path) -> None:
     """Ranking and probability quality of the 12-month classifier."""
     fig, axes = plt.subplots(2, 2, figsize=(10, 8.6), facecolor=SURFACE, gridspec_kw={"hspace": 0.36, "wspace": 0.2})
     roc, pr, gains, cal = axes.ravel()
@@ -128,7 +128,7 @@ def who_curves(reports: list[dict], path: Path) -> None:
     plt.close(fig)
 
 
-def who_ranking(reports: list[dict], path: Path) -> None:
+def year_ranking(reports: list[dict], path: Path) -> None:
     """Ranking quality (ROC AUC) in each walk-forward test year."""
     fig, ax = plt.subplots(figsize=(7.2, 4.4), facecolor=SURFACE)
     years = [y["test_cutoff"][:7] for y in reports[0]["who_by_year"]]
@@ -163,8 +163,8 @@ def draw(reports: list[dict], prefix: str) -> None:
     reports = [r for r in reports if "who" in r]
     if not reports:
         return
-    who_curves(reports, FIGURES / f"{prefix}who_curves.png")
-    who_ranking(reports, FIGURES / f"{prefix}who_ranking.png")
+    year_curves(reports, FIGURES / f"{prefix}year_curves.png")
+    year_ranking(reports, FIGURES / f"{prefix}year_ranking.png")
 
 
 def main() -> None:

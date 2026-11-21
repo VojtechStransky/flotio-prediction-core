@@ -128,7 +128,7 @@ else.
   tractor firm, against about 12 for trailers and trucks, so there is little
   history to learn from.
 
-![ROC, precision-recall, cumulative gains and calibration for three vehicle categories](docs/figures/who_curves.png)
+![ROC, precision-recall, cumulative gains and calibration for three vehicle categories](docs/figures/year_curves.png)
 
 ### In which month: hard
 
