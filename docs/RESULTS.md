@@ -66,10 +66,23 @@ purpose: a wasted call is cheap and a missed buyer is not.
 
 ### Stability over five test years
 
-The yes/no call in each of five test years. Each column is a separate model,
-fitted only on the years before its test cutoff.
+Each column is a separate model, fitted only on the years before its test
+cutoff.
 
-Each cell is **precision / recall**:
+**Ranking.** How often a buyer is ranked above a non-buyer (ROC AUC). It does
+not depend on the threshold or on how many firms buy, so it is the cleanest
+measure of whether the model holds from year to year.
+
+| Vehicle category | 2021-09 | 2022-09 | 2023-09 | 2024-09 | 2025-09 |
+|---|---:|---:|---:|---:|---:|
+| O4 semi-trailers | 75 % | 78 % | 80 % | 81 % | 80 % |
+| N3 heavy trucks | 78 % | 80 % | 80 % | 80 % | 80 % |
+| T tractors | 65 % | 70 % | 67 % | 64 % | 66 % |
+
+Trucks held at 78 to 80 %. Trailers rose from 75 % to 80 to 81 % in the last
+three years. Tractors moved between 64 % and 70 % with no trend.
+
+**The yes/no call.** Each cell is **precision / recall**:
 
 - **precision**: of the firms the model called, the share that bought;
 - **recall**: of all firms that bought, the share the model called.
@@ -125,8 +138,6 @@ The month model's number moves by up to half a point between runs on the same
 data (the rule's does not), so for trailers and trucks the model and the rule
 are effectively tied. This table comes from a rerun of the gate on 2026-11-20;
 the table below is from the first run.
-
-![The month model's 3-month window against the hand-written rule and a random window](figures/when_placement.png)
 
 ### Placing the month
 

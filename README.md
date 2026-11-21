@@ -121,8 +121,9 @@ else.
   flags a quarter of the firms and finds two thirds of the buyers. For trailers
   that is one buyer in three calls, against one in eight without the model.
 - **Stability.** Over five test years, each with a model fitted only on
-  earlier years, about three called firms in ten bought in every year for
-  trailers and trucks, and the calls found 58 to 67 % of the buyers.
+  earlier years, the ranking score stayed between 75 and 81 % for trailers
+  and trucks. About three called firms in ten bought in every year, and the
+  calls found 58 to 67 % of the buyers.
 - **Tractors are the weak category.** The registry holds under 3 purchases per
   tractor firm, against about 12 for trailers and trucks, so there is little
   history to learn from.
@@ -157,8 +158,6 @@ window contained a purchase.
 
 Over a random window, the model gains 0.9 to 3.3 points and the rule 1.3 to
 1.4.
-
-![The month model's 3-month window against the hand-written rule and a random window](docs/figures/when_placement.png)
 
 ## Layout
 

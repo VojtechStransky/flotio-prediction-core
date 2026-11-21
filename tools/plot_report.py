@@ -2,7 +2,7 @@
 
     python tools/plot_report.py
 
-registry_*.json  -> who_curves.png, who_call.png, when_placement.png
+registry_*.json  -> who_curves.png, who_call.png
 
 Needs only matplotlib and numpy. The reports come from flotio_core.evaluate.
 """
@@ -151,67 +151,12 @@ def who_call(reports: list[dict], path: Path) -> None:
     plt.close(fig)
 
 
-def when_placement(reports: list[dict], path: Path) -> None:
-    """The gate's 3-month window against the baselines; one small panel per data set."""
-    rows = [
-        (
-            "A purchase falls in the chosen 3-month window (the gate)",
-            lambda r: (
-                [
-                    ("Month model", r["when_gate"]["model_pct"] / 100),
-                    ("Hand-written rule", r["when_gate"]["hand_rule_pct"] / 100),
-                ]
-                + ([("Random window", r["when_gate"]["random_pct"] / 100)] if "random_pct" in r["when_gate"] else [])
-            ),
-        ),
-    ]
-    fig, axes = plt.subplots(
-        len(rows),
-        len(reports),
-        figsize=(10, 0.55 * max(len(rows[0][1](r)) for r in reports) + 0.9),
-        facecolor=SURFACE,
-        squeeze=False,
-        gridspec_kw={"wspace": 0.08},
-    )
-    for i, (heading, pick) in enumerate(rows):
-        limit = max(v for r in reports for _, v in pick(r)) * 1.22
-        for j, (r, colour) in enumerate(zip(reports, COLOURS, strict=False)):
-            ax, items = axes[i, j], pick(r)
-            names, values = [n for n, _ in items], [v for _, v in items]
-            y = np.arange(len(items))[::-1]
-            ax.barh(y, values, height=0.68, color=[colour] + [MUTED] * (len(items) - 1))
-            for yi, v in zip(y, values, strict=True):
-                ax.text(v + limit * 0.015, yi, f"{v:.1%}", va="center", fontsize=9, color=INK)
-            ax.set_xlim(0, limit)
-            ax.set_yticks(y, names if j == 0 else [""] * len(items))
-            style(ax, "x")
-            percent_axis(ax, y=False)
-            ax.tick_params(axis="y", labelsize=9.5, colors=INK)
-            ax.set_title(r["name"], loc="left", fontsize=10, color=SECONDARY, pad=4)
-        axes[i, 0].annotate(
-            heading,
-            (0, 1),
-            xycoords="axes fraction",
-            xytext=(0, 24),
-            textcoords="offset points",
-            fontsize=10.5,
-            color=INK,
-            ha="left",
-            va="bottom",
-            annotation_clip=False,
-        )
-    fig.savefig(path, dpi=150, bbox_inches="tight", facecolor=SURFACE)
-    plt.close(fig)
-
-
 def draw(reports: list[dict], prefix: str) -> None:
     reports = [r for r in reports if "who" in r]
     if not reports:
         return
     who_curves(reports, FIGURES / f"{prefix}who_curves.png")
     who_call(reports, FIGURES / f"{prefix}who_call.png")
-    if all("when" in r and "when_gate" in r for r in reports):
-        when_placement(reports, FIGURES / f"{prefix}when_placement.png")
 
 
 def main() -> None:
