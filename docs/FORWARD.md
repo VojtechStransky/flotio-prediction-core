@@ -71,7 +71,7 @@ The 12-month model scored every firm with an earlier purchase on 2026-09-01.
 The question is whether the firms it ranked high are the ones that bought in
 the next one or two months.
 
-How often a buyer was ranked above a non-buyer, with the 95 % range:
+ROC AUC, how often a buyer was ranked above a non-buyer, with the 95 % range:
 
 | Vehicle category | September only | Year earlier | September + October | Year earlier |
 |---|---:|---:|---:|---:|

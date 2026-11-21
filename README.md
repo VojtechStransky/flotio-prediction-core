@@ -108,7 +108,7 @@ Trained on the cutoff 2023-09, threshold and calibration set on 2024-09, judged
 once on the cutoff 2025-09, whose following 12 months were used for nothing
 else.
 
-| Vehicle category | Firms | Bought within 12 months | Buyer ranked above a non-buyer (95 % interval) | Buyers in the top tenth of firms | Recall | Precision |
+| Vehicle category | Firms | Bought within 12 months | ROC AUC: buyer ranked above a non-buyer (95 % interval) | Buyers in the top tenth of firms | Recall | Precision |
 |---|---:|---:|---:|---:|---:|---:|
 | O4 semi-trailers | 8,440 | 11.8 % | 80 % (79 to 82 %) | 42 % | 65 % | 30 % |
 | N3 heavy trucks | 14,136 | 10.8 % | 80 % (79 to 81 %) | 46 % | 67 % | 29 % |

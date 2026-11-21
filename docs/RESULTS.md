@@ -32,8 +32,9 @@ How to read the four charts:
 
 - **ROC curve** (top left): as the model calls more firms, the share of
   buyers it finds against the share of non-buyers it calls. The higher the
-  curve above the dashed line, the better the ranking. The legend gives how
-  often a buyer is ranked above a non-buyer.
+  curve above the dashed line, the better the ranking. The legend gives the
+  area under the curve (ROC AUC): how often a buyer is ranked above a
+  non-buyer.
 - **Precision and recall** (top right): the share of called firms that buy
   against the share of buyers found, for every possible threshold.
 - **Cumulative gains** (bottom left): the share of all buyers reached when
@@ -80,7 +81,7 @@ measure of whether the model holds from year to year.
 Trucks held at 78 to 80 %. Trailers rose from 75 % to 80 to 81 % in the last
 three years. Tractors moved between 64 % and 70 % with no trend.
 
-![Ranking in each of five test years, with the 95 % interval of the last one](figures/who_ranking.png)
+![ROC AUC in each of five test years, with the 95 % interval of the last one](figures/who_ranking.png)
 
 **The yes/no call.** Each cell is **precision / recall**:
 

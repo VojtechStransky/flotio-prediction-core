@@ -60,7 +60,7 @@ def who_curves(reports: list[dict], path: Path) -> None:
             c["roc"]["recall"],
             color=colour,
             linewidth=2,
-            label=f"{r['name']}: buyer ranked higher {w['roc_auc']:.0%}",
+            label=f"{r['name']}: AUC {w['roc_auc']:.0%}",
         )
         roc.plot(
             t["false_positive_rate"],
@@ -141,7 +141,7 @@ def who_ranking(reports: list[dict], path: Path) -> None:
         low, high = r["who"]["roc_auc_ci95"]
         bar_x = x[-1] + 0.12 * (i + 1)  # beside the last point, so overlapping intervals stay readable
         ax.plot([bar_x, bar_x], [low, high], color=colour, linewidth=2.5, solid_capstyle="round")
-        ends.append([auc[-1], f"{r['name']}  {auc[-1]:.0%}"])
+        ends.append([auc[-1], f"{r['name']}  AUC {auc[-1]:.0%}"])
     # Spread the end labels so series that finish at the same value do not collide.
     ends.sort(key=lambda e: e[0])
     for k in range(1, len(ends)):
@@ -149,15 +149,15 @@ def who_ranking(reports: list[dict], path: Path) -> None:
     for y_label, text in ends:
         ax.text(x[-1] + 0.12 * (len(reports) + 1), y_label, text, va="center", fontsize=9, color=INK)
     ax.axhline(0.5, color=MUTED, linewidth=1, linestyle=(0, (4, 3)))
-    ax.text(x[0], 0.505, "random ranking", fontsize=8.5, color=MUTED, va="bottom")
+    ax.text(x[0], 0.505, "random ranking (AUC 50 %)", fontsize=8.5, color=MUTED, va="bottom")
     ax.set_xticks(x, years)
     ax.set_xlim(-0.3, len(years) - 1 + 2.1)
     ax.set_ylim(0.45, 0.9)
     ax.set_xlabel("test year (cutoff)", color=SECONDARY, fontsize=9)
-    ax.set_ylabel("buyer ranked above a non-buyer", color=SECONDARY, fontsize=9)
+    ax.set_ylabel("ROC AUC (buyer ranked above a non-buyer)", color=SECONDARY, fontsize=9)
     title(
         ax,
-        "Ranking in each test year, each a separate model fitted on earlier years\n"
+        "ROC AUC in each test year, each a separate model fitted on earlier years\n"
         "(bars beside the last year = its 95 % interval)",
     )
     legend(ax, loc="lower left", ncols=3)
