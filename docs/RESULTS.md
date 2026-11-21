@@ -62,8 +62,6 @@ wrong one here. Only about one trailer firm in eight buys, so calling nobody
 is 88 % accurate and finds no buyer. The threshold gives up accuracy on
 purpose: a wasted call is cheap and a missed buyer is not.
 
-![Accuracy, precision and recall at the threshold](figures/who_call.png)
-
 ### Stability over five test years
 
 Each column is a separate model, fitted only on the years before its test
@@ -81,6 +79,8 @@ measure of whether the model holds from year to year.
 
 Trucks held at 78 to 80 %. Trailers rose from 75 % to 80 to 81 % in the last
 three years. Tractors moved between 64 % and 70 % with no trend.
+
+![Ranking in each of five test years, with the 95 % interval of the last one](figures/who_ranking.png)
 
 **The yes/no call.** Each cell is **precision / recall**:
 

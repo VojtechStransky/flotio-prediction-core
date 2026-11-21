@@ -2,7 +2,7 @@
 
     python tools/plot_report.py
 
-registry_*.json  -> who_curves.png, who_call.png
+registry_*.json  -> who_curves.png, who_ranking.png
 
 Needs only matplotlib and numpy. The reports come from flotio_core.evaluate.
 """
@@ -128,25 +128,42 @@ def who_curves(reports: list[dict], path: Path) -> None:
     plt.close(fig)
 
 
-def who_call(reports: list[dict], path: Path) -> None:
-    """The yes/no call at the threshold on the test year."""
-    fig, bars = plt.subplots(figsize=(5.6, 4.3), facecolor=SURFACE)
-    measures = [("accuracy", "Accuracy"), ("precision", "Precision"), ("recall", "Recall")]
-    width = 0.8 / len(reports)
+def who_ranking(reports: list[dict], path: Path) -> None:
+    """Ranking quality (ROC AUC) in each walk-forward test year, with the 95 % interval of the last one."""
+    fig, ax = plt.subplots(figsize=(7.2, 4.4), facecolor=SURFACE)
+    years = [y["test_cutoff"][:7] for y in reports[0]["who_by_year"]]
+    x = np.arange(len(years))
+    ends = []
     for i, (r, colour) in enumerate(zip(reports, COLOURS, strict=False)):
-        values = [r["who"]["threshold"][k] for k, _ in measures]
-        x = np.arange(len(measures)) + (i - (len(reports) - 1) / 2) * width
-        bars.bar(x, values, width=width * 0.9, color=colour, label=r["name"])
-        for xi, v in zip(x, values, strict=True):
-            bars.text(xi, v + 0.012, f"{v:.0%}", ha="center", va="bottom", fontsize=7.5, color=INK)
-    bars.set_xticks(range(len(measures)), [name for _, name in measures])
-    bars.set_ylim(0, 1)
-    title(bars, "The yes/no call on the test year, at the threshold in use")
-    legend(bars, loc="upper right", ncols=1)
-    style(bars, "y")
-    percent_axis(bars, x=False)
-    bars.tick_params(axis="x", labelsize=10, colors=INK)
-
+        auc = [y["roc_auc"] for y in r["who_by_year"]]
+        ax.plot(x, auc, color=colour, linewidth=2, label=r["name"])
+        ax.plot(x, auc, "o", color=colour, markersize=8, markeredgecolor=SURFACE, markeredgewidth=2)
+        low, high = r["who"]["roc_auc_ci95"]
+        bar_x = x[-1] + 0.12 * (i + 1)  # beside the last point, so overlapping intervals stay readable
+        ax.plot([bar_x, bar_x], [low, high], color=colour, linewidth=2.5, solid_capstyle="round")
+        ends.append([auc[-1], f"{r['name']}  {auc[-1]:.0%}"])
+    # Spread the end labels so series that finish at the same value do not collide.
+    ends.sort(key=lambda e: e[0])
+    for k in range(1, len(ends)):
+        ends[k][0] = max(ends[k][0], ends[k - 1][0] + 0.025)
+    for y_label, text in ends:
+        ax.text(x[-1] + 0.12 * (len(reports) + 1), y_label, text, va="center", fontsize=9, color=INK)
+    ax.axhline(0.5, color=MUTED, linewidth=1, linestyle=(0, (4, 3)))
+    ax.text(x[0], 0.505, "random ranking", fontsize=8.5, color=MUTED, va="bottom")
+    ax.set_xticks(x, years)
+    ax.set_xlim(-0.3, len(years) - 1 + 2.1)
+    ax.set_ylim(0.45, 0.9)
+    ax.set_xlabel("test year (cutoff)", color=SECONDARY, fontsize=9)
+    ax.set_ylabel("buyer ranked above a non-buyer", color=SECONDARY, fontsize=9)
+    title(
+        ax,
+        "Ranking in each test year, each a separate model fitted on earlier years\n"
+        "(bars beside the last year = its 95 % interval)",
+    )
+    legend(ax, loc="lower left", ncols=3)
+    style(ax, "y")
+    percent_axis(ax, x=False)
+    ax.tick_params(axis="x", colors=INK)
     fig.savefig(path, dpi=150, bbox_inches="tight", facecolor=SURFACE)
     plt.close(fig)
 
@@ -156,7 +173,7 @@ def draw(reports: list[dict], prefix: str) -> None:
     if not reports:
         return
     who_curves(reports, FIGURES / f"{prefix}who_curves.png")
-    who_call(reports, FIGURES / f"{prefix}who_call.png")
+    who_ranking(reports, FIGURES / f"{prefix}who_ranking.png")
 
 
 def main() -> None:
