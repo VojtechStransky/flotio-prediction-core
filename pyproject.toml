@@ -1,0 +1,33 @@
+[project]
+name = "flotio-core"
+version = "0.1.0"
+description = "Who buys a vehicle in the next 12 months, and in which month"
+requires-python = ">=3.11"
+dependencies = [
+    "polars>=1.0",
+    "numpy>=1.26",
+    "scikit-learn>=1.5",
+    "xgboost>=2.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.6"]
+plots = ["matplotlib>=3.8"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+src = ["src", "tests", "examples", "tools"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]

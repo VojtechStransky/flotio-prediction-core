@@ -1,0 +1,406 @@
+{
+ "category": "O4",
+ "old_release_max_date": "2026-08-31",
+ "old_data_end": "2026-09-01",
+ "new_data_end": "2026-11-01",
+ "lag": {
+  "match_2016_2025": {
+   "old_total": 53815,
+   "new_total": 53815,
+   "max_month_rel_diff": 0.0038,
+   "median_month_rel_diff": 0.0
+  },
+  "recent": {
+   "2025-09-01": {
+    "old": 502,
+    "new": 502
+   },
+   "2025-10-01": {
+    "old": 461,
+    "new": 461
+   },
+   "2025-11-01": {
+    "old": 531,
+    "new": 531
+   },
+   "2025-12-01": {
+    "old": 429,
+    "new": 429
+   },
+   "2026-01-01": {
+    "old": 472,
+    "new": 472
+   },
+   "2026-02-01": {
+    "old": 509,
+    "new": 509
+   },
+   "2026-03-01": {
+    "old": 524,
+    "new": 524
+   },
+   "2026-04-01": {
+    "old": 463,
+    "new": 463
+   },
+   "2026-05-01": {
+    "old": 461,
+    "new": 461
+   },
+   "2026-06-01": {
+    "old": 480,
+    "new": 480
+   },
+   "2026-07-01": {
+    "old": 459,
+    "new": 459
+   },
+   "2026-08-01": {
+    "old": 445,
+    "new": 442
+   },
+   "2026-09-01": {
+    "old": 0,
+    "new": 482
+   },
+   "2026-10-01": {
+    "old": 0,
+    "new": 480
+   }
+  }
+ },
+ "who": {
+  "forward": {
+   "firms_scored": 8831,
+   "validation_roc_auc": 0.8069,
+   "1m": {
+    "buyers_in_window": 203,
+    "buyers_scored": 151,
+    "buyers_new_firms_not_scored": 52,
+    "base_rate": 0.0171,
+    "roc_auc": 0.8441,
+    "roc_auc_ci95": [
+     0.8103,
+     0.8786
+    ],
+    "pr_auc": 0.2759,
+    "pr_auc_lift": 16.13,
+    "top_10pct": {
+     "buyers_found": 0.6026,
+     "hit_rate": 0.1031,
+     "lift": 6.0272
+    },
+    "top_20pct": {
+     "buyers_found": 0.7219,
+     "hit_rate": 0.0617,
+     "lift": 3.6097
+    },
+    "at_threshold": {
+     "called_share": 0.2555,
+     "precision": 0.0501,
+     "recall": 0.7483,
+     "lift": 2.93
+    },
+    "sum_p12_over_scored": 1028.5
+   },
+   "2m": {
+    "buyers_in_window": 337,
+    "buyers_scored": 255,
+    "buyers_new_firms_not_scored": 82,
+    "base_rate": 0.0289,
+    "roc_auc": 0.8381,
+    "roc_auc_ci95": [
+     0.809,
+     0.8631
+    ],
+    "pr_auc": 0.3294,
+    "pr_auc_lift": 11.41,
+    "top_10pct": {
+     "buyers_found": 0.5765,
+     "hit_rate": 0.1665,
+     "lift": 5.7654
+    },
+    "top_20pct": {
+     "buyers_found": 0.7098,
+     "hit_rate": 0.1025,
+     "lift": 3.5494
+    },
+    "at_threshold": {
+     "called_share": 0.2555,
+     "precision": 0.0838,
+     "recall": 0.7412,
+     "lift": 2.9
+    },
+    "sum_p12_over_scored": 1028.5
+   }
+  },
+  "baseline": {
+   "firms_scored": 8440,
+   "validation_roc_auc": 0.8145,
+   "1m": {
+    "buyers_in_window": 193,
+    "buyers_scored": 157,
+    "buyers_new_firms_not_scored": 36,
+    "base_rate": 0.0186,
+    "roc_auc": 0.8438,
+    "roc_auc_ci95": [
+     0.803,
+     0.8784
+    ],
+    "pr_auc": 0.3162,
+    "pr_auc_lift": 17.0,
+    "top_10pct": {
+     "buyers_found": 0.6306,
+     "hit_rate": 0.1173,
+     "lift": 6.3057
+    },
+    "top_20pct": {
+     "buyers_found": 0.7261,
+     "hit_rate": 0.0675,
+     "lift": 3.6306
+    },
+    "at_threshold": {
+     "called_share": 0.2541,
+     "precision": 0.0559,
+     "recall": 0.7643,
+     "lift": 3.01
+    },
+    "sum_p12_over_scored": 948.0
+   },
+   "2m": {
+    "buyers_in_window": 341,
+    "buyers_scored": 276,
+    "buyers_new_firms_not_scored": 65,
+    "base_rate": 0.0327,
+    "roc_auc": 0.814,
+    "roc_auc_ci95": [
+     0.7856,
+     0.8419
+    ],
+    "pr_auc": 0.3115,
+    "pr_auc_lift": 9.53,
+    "top_10pct": {
+     "buyers_found": 0.5543,
+     "hit_rate": 0.1813,
+     "lift": 5.5435
+    },
+    "top_20pct": {
+     "buyers_found": 0.663,
+     "hit_rate": 0.1084,
+     "lift": 3.3152
+    },
+    "at_threshold": {
+     "called_share": 0.2541,
+     "precision": 0.0895,
+     "recall": 0.6957,
+     "lift": 2.74
+    },
+    "sum_p12_over_scored": 948.0
+   }
+  }
+ },
+ "month": {
+  "forward": {
+   "firms_modelled": 3972,
+   "train_rows": 869453,
+   "h0_2026-09-01": {
+    "buyers_in_month": 203,
+    "buyers_modelled": 139,
+    "observed_rate": 0.03499,
+    "mean_predicted": 0.03501,
+    "expected_buyers": 139.1,
+    "roc_auc": 0.8054,
+    "roc_auc_ci95": [
+     0.7647,
+     0.848
+    ],
+    "pr_auc": 0.3386,
+    "rule_roc_auc": 0.5383
+   },
+   "h1_2026-10-01": {
+    "buyers_in_month": 180,
+    "buyers_modelled": 138,
+    "observed_rate": 0.03474,
+    "mean_predicted": 0.03605,
+    "expected_buyers": 143.2,
+    "roc_auc": 0.8428,
+    "roc_auc_ci95": [
+     0.7986,
+     0.8834
+    ],
+    "pr_auc": 0.4284,
+    "rule_roc_auc": 0.6084
+   },
+   "pooled": {
+    "rows": 7944,
+    "roc_auc": 0.8237,
+    "brier": 0.02657,
+    "brier_base_rate": 0.03365,
+    "brier_skill": 0.21061,
+    "log_loss": 0.11267,
+    "log_loss_base_rate": 0.15128,
+    "calibration_error": 0.00458,
+    "mean_predicted": 0.03553,
+    "mean_observed": 0.03487,
+    "calibration": [
+     {
+      "predicted": 0.00399,
+      "observed": 0.00881,
+      "rows": 795
+     },
+     {
+      "predicted": 0.00585,
+      "observed": 0.00629,
+      "rows": 795
+     },
+     {
+      "predicted": 0.00773,
+      "observed": 0.01132,
+      "rows": 795
+     },
+     {
+      "predicted": 0.01005,
+      "observed": 0.01384,
+      "rows": 795
+     },
+     {
+      "predicted": 0.01302,
+      "observed": 0.0063,
+      "rows": 794
+     },
+     {
+      "predicted": 0.01654,
+      "observed": 0.01385,
+      "rows": 794
+     },
+     {
+      "predicted": 0.02203,
+      "observed": 0.02267,
+      "rows": 794
+     },
+     {
+      "predicted": 0.03165,
+      "observed": 0.01763,
+      "rows": 794
+     },
+     {
+      "predicted": 0.05191,
+      "observed": 0.04912,
+      "rows": 794
+     },
+     {
+      "predicted": 0.19269,
+      "observed": 0.19899,
+      "rows": 794
+     }
+    ]
+   },
+   "firm_any_in_window": {
+    "roc_auc": 0.8007,
+    "observed_buyers": 233,
+    "expected_buyers": 250.8
+   }
+  },
+  "baseline": {
+   "firms_modelled": 3935,
+   "train_rows": 778016,
+   "h0_2025-09-01": {
+    "buyers_in_month": 193,
+    "buyers_modelled": 142,
+    "observed_rate": 0.03609,
+    "mean_predicted": 0.0325,
+    "expected_buyers": 127.9,
+    "roc_auc": 0.8406,
+    "roc_auc_ci95": [
+     0.8048,
+     0.8732
+    ],
+    "pr_auc": 0.3999,
+    "rule_roc_auc": 0.5686
+   },
+   "h1_2025-10-01": {
+    "buyers_in_month": 193,
+    "buyers_modelled": 145,
+    "observed_rate": 0.03685,
+    "mean_predicted": 0.03407,
+    "expected_buyers": 134.1,
+    "roc_auc": 0.8067,
+    "roc_auc_ci95": [
+     0.7674,
+     0.848
+    ],
+    "pr_auc": 0.3521,
+    "rule_roc_auc": 0.5882
+   },
+   "pooled": {
+    "rows": 7870,
+    "roc_auc": 0.824,
+    "brier": 0.0279,
+    "brier_base_rate": 0.03514,
+    "brier_skill": 0.206,
+    "log_loss": 0.11763,
+    "log_loss_base_rate": 0.15655,
+    "calibration_error": 0.00517,
+    "mean_predicted": 0.03329,
+    "mean_observed": 0.03647,
+    "calibration": [
+     {
+      "predicted": 0.00405,
+      "observed": 0.00254,
+      "rows": 787
+     },
+     {
+      "predicted": 0.00581,
+      "observed": 0.00889,
+      "rows": 787
+     },
+     {
+      "predicted": 0.00731,
+      "observed": 0.01144,
+      "rows": 787
+     },
+     {
+      "predicted": 0.0093,
+      "observed": 0.01271,
+      "rows": 787
+     },
+     {
+      "predicted": 0.0124,
+      "observed": 0.01017,
+      "rows": 787
+     },
+     {
+      "predicted": 0.01551,
+      "observed": 0.01906,
+      "rows": 787
+     },
+     {
+      "predicted": 0.02051,
+      "observed": 0.02541,
+      "rows": 787
+     },
+     {
+      "predicted": 0.03037,
+      "observed": 0.02414,
+      "rows": 787
+     },
+     {
+      "predicted": 0.0489,
+      "observed": 0.05464,
+      "rows": 787
+     },
+     {
+      "predicted": 0.17871,
+      "observed": 0.19568,
+      "rows": 787
+     }
+    ]
+   },
+   "firm_any_in_window": {
+    "roc_auc": 0.8061,
+    "observed_buyers": 244,
+    "expected_buyers": 233.4
+   }
+  }
+ }
+}
