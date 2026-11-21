@@ -6,20 +6,30 @@ market-intelligence product I built over the Czech vehicle registry; this
 repository is a standalone version of that core with its results on the real
 registry.
 
+**The two predictions**
+
+| Name | Question | Answer for each firm |
+|---|---|---|
+| **who** | Will this firm buy a vehicle in the next 12 months? | a probability, and a yes/no call |
+| **when** | If it buys, in which of those 12 months? | each month's share of that probability |
+
+Each is a package of the same name in [`src/flotio_core/`](src/flotio_core/),
+and the results below are split the same way.
+
 **In short**
 
-- **Who buys: works.** On the real registry, given one buyer and one
+- **who: works.** On the real registry, given one buyer and one
   non-buyer, the model ranks the buyer higher 80 % of the time for
   semi-trailers and heavy trucks. The tenth of firms it ranks highest holds
   42 to 46 % of all buyers, and half of those firms bought, against one firm
   in nine overall.
-- **In which month: barely better than chance.** The month the model ranks
+- **when: barely better than chance.** The month the model ranks
   first is right about 17 % of the time, against 16 % for a random month. A
   backtest gate decides per vehicle category whether the month model is used;
   it failed on two of three, and there the product keeps its hand-written
   rule.
 - **The code is a sketch of the production core:** two model packages
-  ([`year_prediction`](src/flotio_core/year_prediction/README.md), [`month_prediction`](src/flotio_core/month_prediction/README.md)) and an
+  ([`who`](src/flotio_core/who/README.md), [`when`](src/flotio_core/when/README.md)) and an
   evaluation module, about 900 lines, 18 tests. The registry and customer data are not here; only aggregate
   results are.
 
@@ -46,8 +56,8 @@ flowchart LR
     A["Vehicle registry"]
     B["Purchase history of each firm"]
     C["Features at a cutoff date"]
-    D["year_prediction: chance of a purchase in 12 months"]
-    E["month_prediction: share of each month"]
+    D["who: chance of a purchase in 12 months"]
+    E["when: share of each month"]
     G{"Backtest gate"}
     R["Hand-written rule"]
     F["Call list"]
@@ -62,36 +72,34 @@ flowchart LR
     D --> F
 ```
 
-| | [`year_prediction/`](src/flotio_core/year_prediction/README.md) | [`month_prediction/`](src/flotio_core/month_prediction/README.md) |
+| | [`who/`](src/flotio_core/who/README.md) | [`when/`](src/flotio_core/when/README.md) |
 |---|---|---|
 | Question | Will this firm buy in the next 12 months? | In which of those months? |
 | Model | gradient-boosted classifier, one row per firm | discrete-time hazard: one row per firm × month-start × months-ahead |
 | Inputs | purchase counts, recency, gaps, trend, brand loyalty, vehicle age and weight, calendar-month shares | recency, counts over 3 to 60 months, usual and last gap, months-ahead, target calendar month |
 | Output | calibrated probability and a yes/no call | the share of each month in the firm's chance |
-| Details | [features, hyperparameters, threshold](src/flotio_core/year_prediction/README.md) | [features, hyperparameters, hand-written rule](src/flotio_core/month_prediction/README.md) |
+| Details | [features, hyperparameters, threshold](src/flotio_core/who/README.md) | [features, hyperparameters, hand-written rule](src/flotio_core/when/README.md) |
 
-The 12-month chance from `year_prediction` is split over the months by
-`month_prediction`. In code, the whole flow is a few calls:
+The 12-month chance from `who` is split over the months by
+`when`. In code, the whole flow is a few calls:
 
 ```python
 from datetime import date
 import polars as pl
-from flotio_core import month_prediction, year_prediction
+from flotio_core import when, who
 
 today = date(2026, 1, 1)
 purchases = pl.read_parquet("purchases.parquet")  # one row per vehicle: firm, purchase_date, brand, year_built, weight
 
-# Year model: trains on 2023, sets the threshold and the calibration on 2024.
-model = year_prediction.fit(purchases, date(2024, 1, 1))
+# who: trains on 2023, sets the threshold and the calibration on 2024.
+model = who.fit(purchases, date(2024, 1, 1))
 firms, chance, call = model.predict(purchases, today)  # 12-month chance and the yes/no call per firm
 
-# Month model: used only if it is at least as good as the hand-written rule in a backtest.
-gate = month_prediction.backtest(purchases, date(2024, 1, 1), today)
+# when: used only if it is at least as good as the hand-written rule in a backtest.
+gate = when.backtest(purchases, date(2024, 1, 1), today)
 if gate["passed"]:
-    months = [year_prediction.add_months(today, h) for h in range(12)]
-    shares = month_prediction.month_shares(
-        month_prediction.train(purchases, today), purchases, months
-    )  # firm -> share of each month
+    months = [who.add_months(today, h) for h in range(12)]
+    shares = when.month_shares(when.train(purchases, today), purchases, months)  # firm -> share of each month
 ```
 
 ## Results
@@ -102,7 +110,7 @@ test years, is in [`docs/RESULTS.md`](docs/RESULTS.md). A forward check on
 September and October 2026, months no model had seen, is in
 [`docs/FORWARD.md`](docs/FORWARD.md): the ranking held up.
 
-### Who buys: works
+### who: works
 
 Trained on the cutoff 2023-09, threshold and calibration set on 2024-09, judged
 once on the cutoff 2025-09, whose following 12 months were used for nothing
@@ -128,9 +136,9 @@ else.
   tractor firm, against about 12 for trailers and trucks, so there is little
   history to learn from.
 
-![ROC, precision-recall, cumulative gains and calibration for three vehicle categories](docs/figures/year_curves.png)
+![ROC, precision-recall, cumulative gains and calibration for three vehicle categories](docs/figures/who_curves.png)
 
-### In which month: hard
+### when: hard
 
 The model is trained on data before 2024-09 and judged on the 12 month-starts
 after it. Among the firms that bought in the next 12 months, the share for which
@@ -163,11 +171,11 @@ Over a random window, the model gains 0.9 to 3.3 points and the rule 1.3 to
 
 | Path | What it is |
 |---|---|
-| [`src/flotio_core/year_prediction/`](src/flotio_core/year_prediction/README.md) | the 12-month model, one file per use; its README lists the features and hyperparameters |
+| [`src/flotio_core/who/`](src/flotio_core/who/README.md) | the 12-month model, one file per use; its README lists the features and hyperparameters |
 | &nbsp;&nbsp;`features.py` | cutoff dates, purchase history to per-firm inputs and the 12-month label, brand encoding |
 | &nbsp;&nbsp;`model.py` | the classifier: `fit()` trains and calibrates it, `WhoModel.predict()` scores firms |
 | &nbsp;&nbsp;`threshold.py` | the yes/no call: metrics at a threshold, the threshold chosen by its cost |
-| [`src/flotio_core/month_prediction/`](src/flotio_core/month_prediction/README.md) | the month model, one file per use; its README lists the features, hyperparameters and the hand-written rule |
+| [`src/flotio_core/when/`](src/flotio_core/when/README.md) | the month model, one file per use; its README lists the features, hyperparameters and the hand-written rule |
 | &nbsp;&nbsp;`history.py` | month indexing, purchase history to per-firm inputs and month labels |
 | &nbsp;&nbsp;`model.py` | the monthly hazard model: `train()` and `HazardModel.predict()` |
 | &nbsp;&nbsp;`shares.py` | `month_shares()`: each month's share of a firm's chance, what callers use |
@@ -196,8 +204,8 @@ python examples/evaluate.py purchases_O4.parquet O4 "O4 semi-trailers" --data-en
 
 ## What is different from production
 
-[`month_prediction/`](src/flotio_core/month_prediction/README.md) is the production module, split into files by use, with
-the column names translated. [`year_prediction/`](src/flotio_core/year_prediction/README.md) is a reduced rewrite of the
+[`when/`](src/flotio_core/when/README.md) is the production module, split into files by use, with
+the column names translated. [`who/`](src/flotio_core/who/README.md) is a reduced rewrite of the
 production script, split the same way: it keeps the method and drops what
 depends on the registry or on customer data.
 

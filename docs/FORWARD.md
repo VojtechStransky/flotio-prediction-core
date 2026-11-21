@@ -28,9 +28,9 @@ Contents: [How it was run](#how-it-was-run) · [Is the new data complete](#is-th
 **Forward.** Both models were built with the code in this repository, from
 the 2026-09-01 release only:
 
-- `year_prediction.fit()` with validation cutoff 2025-09, scoring every firm at
+- `who.fit()` with validation cutoff 2025-09, scoring every firm at
   2026-09-01;
-- `month_prediction.train()` with `data_end` 2026-09-01, giving every modelled
+- `when.train()` with `data_end` 2026-09-01, giving every modelled
   firm a probability for September (h = 0) and October (h = 1).
 
 The outcomes come only from the 2026-11-01 release: which firms bought in

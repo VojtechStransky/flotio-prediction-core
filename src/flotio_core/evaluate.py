@@ -23,7 +23,7 @@ import numpy as np
 import polars as pl
 from sklearn.metrics import average_precision_score, precision_recall_curve, roc_auc_score, roc_curve
 
-from . import month_prediction, year_prediction
+from . import when, who
 
 
 def _thin(*arrays: np.ndarray, points: int = 80) -> list[list[float]]:
@@ -79,7 +79,7 @@ def classifier_report(
     fpr, tpr, _ = roc_curve(y, raw)
     precision, recall, _ = precision_recall_curve(y, raw)
 
-    point = year_prediction.metrics_at_threshold(y, raw, threshold)
+    point = who.metrics_at_threshold(y, raw, threshold)
     tp, fp, fn, tn = point["tp"], point["fp"], point["fn"], point["tn"]
 
     # Firms in the order a sales team would call them.
@@ -149,18 +149,16 @@ def evaluate_who(purchases: pl.DataFrame, test_cutoff: date, *, curves: bool = T
     validation    cutoff test - 12 months: threshold and calibration
     test          cutoff test, used for nothing but this report
     """
-    val_cutoff = year_prediction.add_months(test_cutoff, -12)
-    model = year_prediction.fit(purchases, val_cutoff)
-    X, y, _, names, _ = year_prediction.prepare_xy(
-        year_prediction.build_features(purchases, test_cutoff), model.encoder
-    )
+    val_cutoff = who.add_months(test_cutoff, -12)
+    model = who.fit(purchases, val_cutoff)
+    X, y, _, names, _ = who.prepare_xy(who.build_features(purchases, test_cutoff), model.encoder)
     raw = model.model.predict_proba(X)[:, 1]
     report = classifier_report(y, raw, model.calibrator.predict(raw), model.threshold, curves=curves)
     importance = sorted(zip(names, model.model.feature_importances_.tolist(), strict=True), key=lambda t: -t[1])
     return {
-        "train_cutoff": str(year_prediction.add_months(val_cutoff, -12)),
+        "train_cutoff": str(who.add_months(val_cutoff, -12)),
         "validation_cutoff": str(val_cutoff),
-        "test_cutoff": str(year_prediction.add_months(test_cutoff, 0)),
+        "test_cutoff": str(who.add_months(test_cutoff, 0)),
         "validation_roc_auc": model.metrics["val_auc"],
         **report,
         "top_features": [{"feature": f, "importance": round(v, 4)} for f, v in importance[:8]],
@@ -201,21 +199,21 @@ def month_report(purchases: pl.DataFrame, cutoff: date, data_end: date, *, month
                          purchase? Compared with the hand-written rule and a
                          random month.
     """
-    hm = month_prediction.train(purchases, cutoff)
-    pm = month_prediction.purchase_months(purchases)
-    end_mi, c_mi = month_prediction.month_index(data_end), month_prediction.month_index(cutoff)
+    hm = when.train(purchases, cutoff)
+    pm = when.purchase_months(purchases)
+    end_mi, c_mi = when.month_index(data_end), when.month_index(cutoff)
     rng = np.random.default_rng(seed)
 
     ys, ps, rules, origins = [], [], [], 0
     for omi in range(c_mi, c_mi + 12):
         if omi + months > end_mi:
             break
-        firms, ph = hm.predict(pm, month_prediction.month_start(omi))
+        firms, ph = hm.predict(pm, when.month_start(omi))
         if len(firms) == 0:
             continue
-        ys.append(month_prediction.labels_at(pm, firms, omi, end_mi)[:, :months])
+        ys.append(when.labels_at(pm, firms, omi, end_mi)[:, :months])
         ps.append(ph[:, :months])
-        rules.append(month_prediction.rule_profile(pm, firms, omi)[:, :months])
+        rules.append(when.rule_profile(pm, firms, omi)[:, :months])
         origins += 1
     if not ys:
         return {"origins": 0}

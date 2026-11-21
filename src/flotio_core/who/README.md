@@ -1,7 +1,7 @@
-# year_prediction
+# who: will this firm buy in the next 12 months?
 
 Predicts whether a firm buys a vehicle in the next 12 months. In which of
-those months is predicted by [month_prediction](../month_prediction/README.md).
+those months is predicted by [when](../when/README.md).
 Overview and results: [main README](../../../README.md).
 
 ## Model

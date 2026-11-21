@@ -1,6 +1,6 @@
 """WHEN: month-by-month purchase model (discrete-time hazard).
 
-The 12-month classifier in year_prediction answers *who* buys. This model answers
+The 12-month classifier in `who` answers *who* buys. This model answers
 *which month*: for a firm at month start O it predicts p_h = P(firm buys a
 vehicle in month O+h) for h = 0..H-1. Its share of each month (p_h / sum p)
 is meant to replace a hand-written rule (month share of past purchases x

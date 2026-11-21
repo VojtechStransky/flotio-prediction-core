@@ -16,7 +16,7 @@ from pathlib import Path
 
 import polars as pl
 
-from flotio_core import evaluate, month_prediction, year_prediction
+from flotio_core import evaluate, when, who
 
 RESULTS = Path(__file__).resolve().parents[1] / "docs" / "results"
 COLUMNS = {"firm": pl.Int64, "purchase_date": pl.Date, "brand": pl.Utf8, "year_built": pl.Int32, "weight": pl.Float64}
@@ -40,8 +40,8 @@ def main() -> None:
 
     purchases = load(args.purchases).filter(pl.col("purchase_date") < args.data_end)
     data_end = args.data_end
-    test = year_prediction.add_months(data_end, -12)
-    cutoff = year_prediction.add_months(data_end, -24)
+    test = who.add_months(data_end, -12)
+    cutoff = who.add_months(data_end, -24)
 
     report = {
         "name": args.name,
@@ -51,11 +51,9 @@ def main() -> None:
         "who_by_year": [
             {k: r[k] for k in ("test_cutoff", "firms", "base_rate", "roc_auc", "pr_auc", "brier_skill")}
             | {k: r["threshold"][k] for k in ("precision", "recall", "false_positive_rate")}
-            for r in evaluate.walk_forward(
-                purchases, [year_prediction.add_months(test, -12 * i) for i in (4, 3, 2, 1, 0)]
-            )
+            for r in evaluate.walk_forward(purchases, [who.add_months(test, -12 * i) for i in (4, 3, 2, 1, 0)])
         ],
-        "when_gate": month_prediction.backtest(purchases, cutoff, data_end),
+        "when_gate": when.backtest(purchases, cutoff, data_end),
         "when": evaluate.month_report(purchases, cutoff, data_end),
     }
     out = RESULTS / f"registry_{args.category}.json"

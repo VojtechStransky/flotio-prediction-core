@@ -6,7 +6,7 @@ import numpy as np
 import polars as pl
 import pytest
 
-from flotio_core import month_prediction
+from flotio_core import when
 
 
 def _purchases(rows):
@@ -17,24 +17,22 @@ def _purchases(rows):
 
 
 def test_features_only_use_purchases_before_the_snapshot():
-    pm = month_prediction.purchase_months(
-        _purchases([(1, date(2024, 1, 15)), (1, date(2024, 6, 3)), (1, date(2024, 7, 20))])
-    )
-    f = month_prediction.features_at(pm, month_prediction.month_index(date(2024, 7, 1))).row(0, named=True)
+    pm = when.purchase_months(_purchases([(1, date(2024, 1, 15)), (1, date(2024, 6, 3)), (1, date(2024, 7, 20))]))
+    f = when.features_at(pm, when.month_index(date(2024, 7, 1))).row(0, named=True)
     assert f["n_total"] == 2  # the July purchase is not known on 1 July
     assert f["days_since"] == (date(2024, 7, 1) - date(2024, 6, 3)).days
     assert f["buymonths"] == 2 and f["n_3m"] == 1
 
 
 def test_inactive_firms_are_not_modelled():
-    pm = month_prediction.purchase_months(_purchases([(1, date(2015, 1, 1)), (2, date(2023, 1, 1))]))
-    assert month_prediction.features_at(pm, month_prediction.month_index(date(2024, 1, 1)))["firm"].to_list() == [2]
+    pm = when.purchase_months(_purchases([(1, date(2015, 1, 1)), (2, date(2023, 1, 1))]))
+    assert when.features_at(pm, when.month_index(date(2024, 1, 1)))["firm"].to_list() == [2]
 
 
 def test_labels_are_unknown_from_data_end():
-    pm = month_prediction.purchase_months(_purchases([(1, date(2024, 3, 9)), (1, date(2024, 5, 1))]))
-    o, end = month_prediction.month_index(date(2024, 1, 1)), month_prediction.month_index(date(2024, 5, 1))
-    y = month_prediction.labels_at(pm, pl.Series([1]), o, end)
+    pm = when.purchase_months(_purchases([(1, date(2024, 3, 9)), (1, date(2024, 5, 1))]))
+    o, end = when.month_index(date(2024, 1, 1)), when.month_index(date(2024, 5, 1))
+    y = when.labels_at(pm, pl.Series([1]), o, end)
     assert y[0, 2] == 1.0 and y[0, 0] == 0.0
     assert np.isnan(y[0, 4])  # May is at data_end: not yet known
 
@@ -51,9 +49,9 @@ def seasonal_purchases():
 
 
 def test_month_model_learns_a_seasonal_shape(seasonal_purchases):
-    model = month_prediction.train(seasonal_purchases, date(2025, 1, 1), n_estimators=60)
+    model = when.train(seasonal_purchases, date(2025, 1, 1), n_estimators=60)
     months = [date(2025, m, 1) for m in range(1, 13)]
-    shares = month_prediction.month_shares(model, seasonal_purchases, months)
+    shares = when.month_shares(model, seasonal_purchases, months)
     assert len(shares) == 60
     for firm, w in shares.items():
         assert w.sum() == pytest.approx(1.0)
@@ -61,31 +59,31 @@ def test_month_model_learns_a_seasonal_shape(seasonal_purchases):
 
 
 def test_shares_outside_the_horizon_raise(seasonal_purchases):
-    model = month_prediction.train(seasonal_purchases, date(2025, 1, 1), n_estimators=10)
+    model = when.train(seasonal_purchases, date(2025, 1, 1), n_estimators=10)
     with pytest.raises(ValueError, match="horizon"):
-        month_prediction.month_shares(model, seasonal_purchases, [date(2026, 6, 1)])
+        when.month_shares(model, seasonal_purchases, [date(2026, 6, 1)])
 
 
 def test_shares_score_at_the_given_origin_not_the_training_end(seasonal_purchases, monkeypatch):
-    hm = month_prediction.train(seasonal_purchases, date(2024, 1, 1), n_estimators=10)
+    hm = when.train(seasonal_purchases, date(2024, 1, 1), n_estimators=10)
     months = [date(2025, 6, 1)]  # beyond the horizon counted from the training end
 
     with pytest.raises(ValueError, match="horizon"):
-        month_prediction.month_shares(hm, seasonal_purchases, months)
+        when.month_shares(hm, seasonal_purchases, months)
 
     origins = []
-    real_predict = month_prediction.HazardModel.predict
+    real_predict = when.HazardModel.predict
     monkeypatch.setattr(
-        month_prediction.HazardModel,
+        when.HazardModel,
         "predict",
         lambda self, pm, origin: origins.append(origin) or real_predict(self, pm, origin),
     )
-    assert month_prediction.month_shares(hm, seasonal_purchases, months, origin=date(2025, 1, 1))
+    assert when.month_shares(hm, seasonal_purchases, months, origin=date(2025, 1, 1))
     assert origins == [date(2025, 1, 1)]
 
 
 def test_backtest_gates_the_model_on_the_hand_written_rule(seasonal_purchases):
-    result = month_prediction.backtest(seasonal_purchases, date(2023, 1, 1), date(2025, 1, 1))
+    result = when.backtest(seasonal_purchases, date(2023, 1, 1), date(2025, 1, 1))
     assert result["buyers"] > 0
     assert {"model_pct", "hand_rule_pct", "random_pct", "passed"} <= set(result)
     assert 0 < result["random_pct"] < 100

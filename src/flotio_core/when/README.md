@@ -1,8 +1,8 @@
-# month_prediction
+# when: in which month will the firm buy?
 
 Predicts in which of the coming months a firm buys a vehicle. The output is each
 month's share of the firm's purchase chance; the 12-month chance itself comes
-from [year_prediction](../year_prediction/README.md). Overview and results:
+from [who](../who/README.md). Overview and results:
 [main README](../../../README.md).
 
 ## Model
