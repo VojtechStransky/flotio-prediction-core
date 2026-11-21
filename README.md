@@ -43,13 +43,22 @@ account, the fleet counts and the dates are blurred.
 
 ```mermaid
 flowchart LR
-    A[Vehicle registry] --> B[Purchase history<br>of each firm]
-    B --> C[Features at a<br>cutoff date]
-    C --> D["year_prediction/<br>chance of a purchase<br>in 12 months"]
-    C --> E["month_prediction/<br>share of each month"]
-    E --> G{Backtest gate}
-    G -- passed --> F[Call list]
-    G -- failed --> R[Hand-written rule] --> F
+    A["Vehicle registry"]
+    B["Purchase history of each firm"]
+    C["Features at a cutoff date"]
+    D["year_prediction: chance of a purchase in 12 months"]
+    E["month_prediction: share of each month"]
+    G{"Backtest gate"}
+    R["Hand-written rule"]
+    F["Call list"]
+    A --> B
+    B --> C
+    C --> D
+    C --> E
+    E --> G
+    G -->|passed| F
+    G -->|failed| R
+    R --> F
     D --> F
 ```
 
